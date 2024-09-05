@@ -8,5 +8,5 @@ async def root():
     
     return JSONResponse(
         status_code=200,
-        content={"message":"Root of Jira ticket handler."}
+        content={"message":"Root of Image Search."}
     )
