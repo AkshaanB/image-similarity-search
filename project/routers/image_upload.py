@@ -36,7 +36,7 @@ async def image_upload(username: str,
 
             return JSONResponse(
                 status_code=200,
-                content={"message": f"File uploaded and data added successfully. Id: f{image_id}"}
+                content={"message": f"File uploaded. Id: f{image_id}"}
             )
         else:
              return JSONResponse(
