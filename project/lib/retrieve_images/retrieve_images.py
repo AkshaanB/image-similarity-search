@@ -1,7 +1,11 @@
 import numpy as np
+from sentence_transformers import SentenceTransformer
 
+
+model = SentenceTransformer('clip-ViT-B-32')
 
 def retrieve_images(model, index, query: str, image_paths: str, top_k: int):
+    
     query_embeddings = model.encode(query)
     query_embeddings = query_embeddings.astype(np.float32).reshape(1,-1)
 
