@@ -51,7 +51,7 @@ def create_faiss_index(username: str, embeddings: list, image_paths: str):
 
 # if __name__=="__main__":
 
-#     embeddings, image_paths = generate_embeddings("akshaanb")
-#     index = create_faiss_index("akshaanb", embeddings, image_paths)
+#     embeddings, image_paths = generate_embeddings("")
+#     index = create_faiss_index("", embeddings, image_paths)
 #     print(index)
     
