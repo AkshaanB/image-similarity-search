@@ -41,6 +41,7 @@ def generate_embeddings(username: str) -> Union[List, List]:
     embeddings = []
     for img_path in image_paths:
         img_path = img_path.replace(base_url, "")
+        
         # download image from the s3 bucket
         response = s3_client.get_object(Bucket=bucket_name, Key=f"{img_path}")
         content = response["Body"].read()
@@ -52,7 +53,7 @@ def generate_embeddings(username: str) -> Union[List, List]:
     return embeddings, image_paths
 
 
-if __name__=="__main__":
+# if __name__=="__main__":
 
-    embeddings, image_paths = generate_embeddings("")
-    print(embeddings, image_paths)
+#     embeddings, image_paths = generate_embeddings("")
+#     print(embeddings, image_paths)
