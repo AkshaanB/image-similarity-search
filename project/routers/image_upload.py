@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 
+from project.lib.generate_embeddings.generate_embeddings import generate_embeddings
+from project.lib.create_faiss_index.create_faiss_index import create_faiss_index
+
 load_dotenv()
 
 s3_client = boto3.client('s3', 
@@ -39,6 +42,10 @@ async def image_upload(username: str,
 
                 # save image to the s3 bucket
                 s3_client.upload_fileobj(image_bytes, bucket_name, f"{username}/images/{image_id}.jpg")
+
+                embeddings, image_paths = generate_embeddings(username)
+
+                index = create_faiss_index(username, embeddings, image_paths)
 
                 return_contents.append({"message": f"File uploaded. Id: f{image_id}"})
                 status_codes.append(200)

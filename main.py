@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from project.routers import root, image_upload, retrieve_images
+from project.routers import root, image_upload, get_images
 
 
 app = FastAPI(title="Image Search Application")
@@ -18,4 +18,4 @@ app.add_middleware(
 
 app.include_router(root.router)
 app.include_router(image_upload.router)
-app.include_router(retrieve_images.router)
+app.include_router(get_images.router)
