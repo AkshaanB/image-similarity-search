@@ -2,7 +2,6 @@ import io
 import os
 import boto3
 from PIL import Image
-from glob import glob
 from dotenv import load_dotenv
 from typing import Union, List
 from sentence_transformers import SentenceTransformer
@@ -20,7 +19,7 @@ bucket_name = os.getenv("BUCKET_NAME")
 base_url = f"https://{bucket_name}.s3.amazonaws.com/"
 
 
-def get_image_paths(username: str):
+def get_image_paths(username: str) -> List[str]:
     image_patterns = ['.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp']
 
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"{username}/images")

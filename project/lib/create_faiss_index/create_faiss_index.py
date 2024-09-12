@@ -2,6 +2,7 @@ import os
 import boto3
 import faiss
 import numpy as np
+from typing import Any
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,7 +15,7 @@ s3_client = boto3.client('s3',
 bucket_name = os.getenv("BUCKET_NAME")
 
 
-def create_faiss_index(username: str, embeddings: list, image_paths: str):
+def create_faiss_index(username: str, embeddings: list, image_paths: str) -> Any:
 
     output_path = f'./{username}_image_indexes.index'
 
