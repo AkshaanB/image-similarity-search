@@ -1,0 +1,9 @@
+# python version - 3.9.18
+
+boto3==1.34.142
+faiss_cpu==1.8.0.post1
+fastapi==0.114.1
+numpy==2.1.1
+Pillow==10.4.0
+python-dotenv==1.0.1
+sentence_transformers==3.0.1

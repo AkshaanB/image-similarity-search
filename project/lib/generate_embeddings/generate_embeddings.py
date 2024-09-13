@@ -1,12 +1,18 @@
 import io
 import os
 import boto3
+import config
+import logging
 from PIL import Image
 from dotenv import load_dotenv
 from typing import Union, List
 from sentence_transformers import SentenceTransformer
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+config.setup_logging()
 
 model = SentenceTransformer('clip-ViT-B-32')
 
@@ -20,6 +26,9 @@ base_url = f"https://{bucket_name}.s3.amazonaws.com/"
 
 
 def get_image_paths(username: str) -> List[str]:
+
+    logger.info("Retrieving image paths.")
+
     image_patterns = ['.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp']
 
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"{username}/images")
@@ -31,10 +40,21 @@ def get_image_paths(username: str) -> List[str]:
                 url = f"{base_url}{item['Key']}"
                 image_files_urls.append(url)
     
-    return image_files_urls
+    if image_files_urls:
+        logger.info("Successfully retrieved the image paths.")
+
+        return image_files_urls
+    
+    else:
+        logger.info("Retrieving image paths failed.")
+
+        return []
 
 
-def generate_embeddings(username: str) -> Union[List, List]:
+def generate_embeddings(username: str) -> Union[List, List]:\
+
+    logger.info("Generating the embeddings.")
+    
     image_paths = get_image_paths(username)
 
     embeddings = []
@@ -49,7 +69,14 @@ def generate_embeddings(username: str) -> Union[List, List]:
         embedding = model.encode(image)
         embeddings.append(embedding)
 
-    return embeddings, image_paths
+    if embeddings and image_paths:
+        logger.info("Successfully generated the embeddings.")
+
+        return embeddings, image_paths
+    else:
+        logger.info("Generating the embeddings failed.")
+
+        return None, []
 
 
 # if __name__=="__main__":

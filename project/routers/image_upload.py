@@ -2,6 +2,8 @@ import io
 import os
 import uuid
 import boto3
+import config
+import logging
 from PIL import Image
 from typing import Any, List
 from dotenv import load_dotenv
@@ -12,6 +14,10 @@ from project.lib.generate_embeddings.generate_embeddings import generate_embeddi
 from project.lib.create_faiss_index.create_faiss_index import create_faiss_index
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+config.setup_logging()
 
 s3_client = boto3.client('s3', 
                          region_name=os.getenv("AWS_REGION"),
@@ -25,6 +31,8 @@ router = APIRouter()
 @router.post('/image_upload', tags=['image_upload'])
 async def image_upload(username: str,
                       files: List[UploadFile] = File(...)) -> Any:
+    logger.info("Request received to upload image/s")
+
     try:
         return_contents = []
         status_codes = []
@@ -42,6 +50,7 @@ async def image_upload(username: str,
 
                 # save image to the s3 bucket
                 s3_client.upload_fileobj(image_bytes, bucket_name, f"{username}/images/{image_id}.jpg")
+                logger.info("Uploaded file to S3 bucket.")
 
                 embeddings, image_paths = generate_embeddings(username)
 
@@ -51,18 +60,24 @@ async def image_upload(username: str,
                 status_codes.append(200)
 
             else:
+                logger.info("File content missing.")
+
                 return_contents.append({"message": "File content missing."})
                 status_codes.append(400)
 
         if all(item == 200 for item in status_codes):
+            logger.info("File/s uploaded successfully.")
+
             return JSONResponse(
                 status_code=200,
                 content={"message": f"File/s uploaded successfully."}
             )
         else:
+            logger.info("File/s upload failed.")
+
             return JSONResponse(
                 status_code=200,
-                content={"message": f"File/s uploaded failed."}
+                content={"message": f"File/s upload failed."}
             )
         
     except Exception as e:

@@ -1,10 +1,16 @@
 import os
 import boto3
 import faiss
+import config
+import logging
 from dotenv import load_dotenv
 from typing import Union, Any, List
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+config.setup_logging()
 
 s3_client = boto3.client('s3', 
                          region_name=os.getenv("AWS_REGION"),
@@ -13,7 +19,9 @@ s3_client = boto3.client('s3',
 
 bucket_name = os.getenv("BUCKET_NAME")
 
+
 def load_faiss_index(username: str) -> Union[Any, List]:
+    logger.info("Loading faiss index.")
 
     with open(f'project/lib/load_faiss_index/{username}_image_indexes.index', 'wb') as file_obj:
         s3_client.download_fileobj(bucket_name, f"{username}/index/{username}_image_indexes.index", file_obj)
@@ -33,7 +41,14 @@ def load_faiss_index(username: str) -> Union[Any, List]:
     if os.path.exists(index_path + '.paths'):
         os.remove(index_path + '.paths')
 
-    return index, image_paths
+    if index and image_paths:
+        logger.info("Successfully loaded faiss index.")
+
+        return index, image_paths
+    else:
+        logger.info("Loading faiss index failed.")
+
+        return None, []
 
 
 # if __name__=="__main__":
